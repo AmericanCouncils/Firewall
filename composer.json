@@ -1,0 +1,23 @@
+{
+    "name": "ac/firewall",
+    "type": "library",
+    "description": "Request verification system for PHP.",
+    "keywords": ["firewall", "authentication", "security"],
+    "homepage": "http://github.com/americancouncils/firewall",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Evan Villemez",
+            "email": "evan.villemez@americancouncils.org"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.3.3",
+        "symfony/event-dispatcher": "2.1.*"
+    },
+    "autoload": {
+        "psr-0": { "AC\\Component\\Firewall": "/" }
+    },
+    "target-dir": "AC/Component/Firewall"
+}
