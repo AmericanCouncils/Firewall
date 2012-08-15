@@ -2,6 +2,10 @@
 
 namespace AC\Component\Firewall;
 
+use AC\Component\Firewall\Event\FirewallEvent;
+use AC\Component\Firewall\Event\FirewallEvents;
+use AC\Component\Firewall\Event\ConfigureFirewallEvent;
+use AC\Component\Firewall\Event\FirewallExceptionEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 

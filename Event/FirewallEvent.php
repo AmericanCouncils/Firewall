@@ -2,7 +2,10 @@
 
 namespace AC\Component\Firewall\Event;
 
-class FirewallEvent
+use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\HttpFoundation\Request;
+
+class FirewallEvent extends Event
 {
     private $response;
     private $request;

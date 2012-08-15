@@ -1,16 +1,17 @@
 # Firewall #
 
-This component provides a shell for an authentication system that can be used for validating any incoming `Request` instance.  All you need to
+This component provides a starting point for an authentication system that can be used for validating any incoming `Request` instance.  All you need to
 do to use it is to configure the `Firewall` instance however you like, and tell it to verify a `Request` object with `Firewall::verifyRequest`.
 
-The Firewall works by providing it's own series of events that you can hook into with your own code in order to implement whatever types of 
+The Firewall works by providing its own series of events that you can hook into with your own code in order to implement whatever types of 
 authentication proceedures you need.
 
 If the firewall succeeds in verifying the request, it returns true.  If there is a failure, it may return a response instance, or an exception will be thrown.
 
 ## Usage ##
 
-Here is the most basic usage of the firewall for verifying incoming requests based on an IP blacklist and/or whitelist.  It takes a bit of set up, it's most useful if used with a framework that provides some solution for dependency injection.
+Here is the most basic usage of the firewall for verifying incoming requests based on an IP blacklist and/or whitelist.  It takes a bit 
+of set up, it's most useful if used with a framework that provides some solution for dependency injection.
 
     <?php
     use AC\Component\Firewall\Firewall;
@@ -76,5 +77,5 @@ This example applies specific configuration to certain configuration handlers, b
 
 ## Events ##
 
-The firewall fires a series of events for your any custom authentication systems to hook into.  The events are documented in the `AC\Component\Event\FirewallEvents` class.  You can register events or event subscribers on the firewall the same as you would any other instance of an `EventDispatcher`.  
+The firewall fires a series of events for any custom authentication systems to hook into.  The events are documented in the `AC\Component\Event\FirewallEvents` class.  You can register events or event subscribers on the firewall the same as you would any other instance of an `EventDispatcherInterface`.
 

@@ -1,5 +1,7 @@
 <?php
 
+namespace AC\Component\Firewall\Event;
+
 class FirewallExceptionEvent extends FirewallEvent
 {
 	protected $exception;
