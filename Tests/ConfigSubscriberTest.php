@@ -64,4 +64,30 @@ class ConfigSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException("AC\Component\Firewall\Exception\InvalidIpException");
         $f->verifyRequest($this->createRequestFromIp("192.168.30.40"));
     }
+    
+    public function testInstantiateWithWhitelistRules()
+    {
+        $s = new ConfigSubscriber(array(
+            "^/" => array(
+                'ip_whitelist' => array('192.168.*.*'),
+            )
+        ));
+        $s->addConfigHandler(new IpWhitelistHandler);
+        $f = new Firewall;
+        $f->addSubscriber($s);
+        $this->assertTrue($f->verifyRequest($this->createRequestFromIp("192.168.30.40")));
+
+        $s = new ConfigSubscriber(array(
+            "^/" => array(
+                'ip_whitelist' => array('192.168.*.*'),
+            )
+        ));
+        $s->addConfigHandler(new IpWhitelistHandler);
+        $f = new Firewall;
+        $f->addSubscriber($s);
+        $this->setExpectedException("AC\Component\Firewall\Exception\InvalidIpException");
+        $this->assertTrue($f->verifyRequest($this->createRequestFromIp("80.0.0.0")));
+    }
+    
+    
 }

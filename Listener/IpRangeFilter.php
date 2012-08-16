@@ -79,7 +79,7 @@ class IpRangeFilter
         
         //if we made it this far with no matches, and the mode is whitelist, then the
         //request is NOT allowed
-        if ($this->mode == self::WHITELIST) {
+        if (self::WHITELIST === $this->mode) {
             throw new InvalidIpException("Access is denied from your location.");
         }
         
