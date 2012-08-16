@@ -20,14 +20,14 @@ class FirewallEvents
      * use that to register event listeners or event subscribers for the
      * other firewall events described below.
      */
-    CONST CONFIGURE = 'firewall.configure';
+    const CONFIGURE = 'firewall.configure';
     
     /**
      * Fires when the firewall receives a request, just after the configure event.
      *
      * Listeners receive an instance of `FirewallEvent`
      */
-	CONST REQUEST = 'firewall.request';
+	const REQUEST = 'firewall.request';
 
     /**
      * This event fires in the event of an exception being thrown during the
@@ -35,7 +35,7 @@ class FirewallEvents
      *
      * Listeners receive an instance of `FirewallExceptionEvent`
      */
-	CONST EXCEPTION = 'firewall.exception';
+	const EXCEPTION = 'firewall.exception';
 
     /**
      * Fires after the request event if no exceptions were thrown.  It's assumed that
@@ -43,6 +43,14 @@ class FirewallEvents
      *
      * Listeners receive an instance of `FirewallEvent`
      */
-	CONST SUCCESS = 'firewall.success';
+	const SUCCESS = 'firewall.success';
+    
+    /**
+     * Fires when the firewall returns a response.  This may happen as the
+     * result of an exception.
+     *
+     * Listeners receive an instance of `FirewallResponseEvent`
+     */
+    const RESPONSE = 'firewall.response';
 
 }

@@ -29,7 +29,7 @@ class ConfigureFirewallEvent extends FirewallEvent
      *
      * @param mixed $listener 
      */
-    public function addListener($eventName, $listener)
+    public function addFirewallListener($eventName, $listener)
     {
         $this->firewall->addListener($eventName, $listener);
     }
@@ -40,7 +40,7 @@ class ConfigureFirewallEvent extends FirewallEvent
      *
      * @param EventSubscriberInterface $subscriber 
      */
-    public function addSubscriber(EventSubscriberInterface $subscriber)
+    public function addFirewallSubscriber(EventSubscriberInterface $subscriber)
     {
         $this->firewall->addSubscriber($subscriber);
     }

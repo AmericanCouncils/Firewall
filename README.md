@@ -11,7 +11,7 @@ If the firewall succeeds in verifying the request, it returns true.  If there is
 ## Usage ##
 
 Here is the most basic usage of the firewall for verifying incoming requests based on an IP blacklist and/or whitelist.  It takes a bit 
-of set up, it's most useful if used with a framework that provides some solution for dependency injection.
+of set up, it's most useful if used with a framework that provides some solution for managing configuration and dependency injection.
 
     <?php
     use AC\Component\Firewall\Firewall;
@@ -23,12 +23,11 @@ of set up, it's most useful if used with a framework that provides some solution
 
     $firewall = new Firewall();
 
-    $ipWhitelist = new IpWhitelist(array('192.168.100.*', '10.0.*.*'));
+    $ipWhitelist = new IpRangeFilter(array('192.168.100.*', '10.0.*.*'), IpRangeFilter::WHITELIST);
     $firewall->addListener(FirewallEvents::REQUEST, array($whitelist, 'onFirewallRequest'));
     
-    $ipBlacklist = new IpBlacklist(array('10.0.100.*'));
+    $ipBlacklist = new IpRangeFilter(array('10.0.100.*'), IpRangeFilter::BLACKLIST);
     $firewall->addListener(FirewallEvents::REQUEST, array($ipBlacklist, 'onFirewallRequest'));
-
 
     //if it fails, exceptions will be thrown to be handled by your application, or a Firewall listener may
     //handle a failure internally by returning a response
@@ -44,7 +43,7 @@ client addresses that match `10.0.100.*`.  It will apply these checks on all req
 ## Configuration subscriber ##
 
 The Firewall provides a flexible configuration subscriber which uses config handlers to dynamically register firewall listeners based
-on the incoming request, and request-specific configuration.
+on the incoming request path, and request-specific configuration.
     
     <?php
     use AC\Component\Firewall\Firewall;
@@ -56,26 +55,29 @@ on the incoming request, and request-specific configuration.
     //define dynamic firewall config by assigning handler keys + config to a path regex
     $firewallRules = array(
         '^/admin' => array(
-            'ip_blacklist' => array('192.168.100.*', '10.0.*.*'),
-            'ip_whitelist' => array('10.0.100.*'),
+            'ip_whitelist' => array('10.*.*.*', '192.168.*),
+            'ip_blacklist' => array('192.168.100.*', '192.168.252.32-192.168.252.64'),
         ),
     );
     
     //register factory handlers
-    $subscriber = new ConfigSubscriber($firewallRules);
-    $subscriber->addConfigHandler(new IpBlacklistHandler());
-    $subscriber->addConfigHandler(new IpWhitelistHandler());
+    $configSubscriber = new ConfigSubscriber($firewallRules);
+    $configSubscriber->addConfigHandler(new IpBlacklistHandler());
+    $configSubscriber->addConfigHandler(new IpWhitelistHandler());
     
     //instantiate firewall with listener config
     $firewall = new Firewall();
-    $firewall->addSubscriber($subscriber);
+    $firewall->addSubscriber($configSubscriber);
     
     //verify the request
     $result = $firewall->verifyRequest(Request::createFromGlobals());
     
-This example applies specific configuration to certain configuration handlers, but only if the request path matches any of the rules.  In this case, only requests from an internal network would be allowed to access any route beginning with `/admin`.
+This example applies specific configuration to certain configuration handlers, but only if the request path 
+matches any of the rules.  In this case, only requests from an internal network would be allowed to access any 
+route beginning with `/admin`.
 
 ## Events ##
 
-The firewall fires a series of events for any custom authentication systems to hook into.  The events are documented in the `AC\Component\Event\FirewallEvents` class.  You can register events or event subscribers on the firewall the same as you would any other instance of an `EventDispatcherInterface`.
-
+The firewall fires a series of events for any custom authentication systems to hook into.  The events are documented in 
+the `AC\Component\Event\FirewallEvents` class.  You can register events or event subscribers on the firewall the same as 
+you would any other instance of an `EventDispatcherInterface`.

@@ -12,7 +12,7 @@ class FirewallServiceProvider implements ServiceProviderInterface
         $app['firewall'] = $app->share(function($c) {
             $f = new Firewall($app['dispatcher']);
 
-            //setup config
+            //TODO: setup config
             
 
             return $f;
@@ -34,6 +34,6 @@ class FirewallServiceProvider implements ServiceProviderInterface
             
             return true;
         });
-                
+
     }
 }

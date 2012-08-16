@@ -5,9 +5,12 @@ namespace AC\Component\Firewall;
 use AC\Component\Firewall\Event\FirewallEvent;
 use AC\Component\Firewall\Event\FirewallEvents;
 use AC\Component\Firewall\Event\ConfigureFirewallEvent;
+use AC\Component\Firewall\Event\FirewallResponseEvent;
 use AC\Component\Firewall\Event\FirewallExceptionEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Provides the shell for an authentication system by using an EventDispatcher to dispatch firewall events.
@@ -47,19 +50,19 @@ class Firewall
             
             //config event, listeners may add listeners/subscribers for other firewall events depending on the request
             if ($response = $this->dispatcher->dispatch(FirewallEvents::CONFIGURE, new ConfigureFirewallEvent($this, $request))->getResponse()) {
-                return $response;
+                return $this->dispatcher->dispatch(FirewallEvents::RESPONSE, new FirewallResponseEvent($request, $response))->getResponse();
             }
 
             //verify request event
             if ($response = $this->dispatcher->dispatch(FirewallEvents::REQUEST, new FirewallEvent($request))->getResponse()) {
-                return $response;
+                return $this->dispatcher->dispatch(FirewallEvents::RESPONSE, new FirewallResponseEvent($request, $response))->getResponse();
             }
 
         } catch (\Exception $e) {
 
             //fire exception event
             if ($response = $this->dispatcher->dispatch(FirewallEvents::EXCEPTION, new FirewallExceptionEvent($request, $e))->getResponse()) {
-                return $response;
+                return $this->dispatcher->dispatch(FirewallEvents::RESPONSE, new FirewallResponseEvent($request, $response))->getResponse();
             }
             
             //throw the original exception if we didn't get a response from any of the firewall listeners
@@ -68,7 +71,7 @@ class Firewall
         
         //success event
         if ($response = $this->dispatcher->dispatch(FirewallEvents::SUCCESS, new FirewallEvent($request))->getResponse()) {
-            return $response;
+            return $this->dispatcher->dispatch(FirewallEvents::RESPONSE, new FirewallResponseEvent($request, $response))->getResponse();
         }
         
         return true;
@@ -77,9 +80,9 @@ class Firewall
     /**
      * @see Symfony\Component\EventDispatcher\EventDispatcherInterface::addListener
      */
-    public function addListener($listener)
+    public function addListener($eventName, $listener)
     {
-        $this->dispatcher->addListener($listener);
+        $this->dispatcher->addListener($eventName, $listener);
     }
     
     /**

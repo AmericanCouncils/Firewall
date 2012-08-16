@@ -4,6 +4,7 @@ namespace AC\Component\Firewall\Tests;
 
 use AC\Component\Firewall\Firewall;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class FirewallTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,32 +21,37 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($f->verifyRequest(Request::create("/", "GET")));
     }
     
-    public function testDispatchFirewallEvents()
+    public function testDispatchFirewallEvents1()
     {
         $f = new Firewall;
         $s = new Mock\BasicSubscriber;
+        $this->assertFalse($s->handledConfigure());
+        $this->assertFalse($s->handledRequest());
+        $this->assertFalse($s->handledSuccess());
         
         $f->addSubscriber($s);
-        $f->verifyRequest(Request::create("/", "GET"));
+        $this->assertTrue($f->verifyRequest(Request::create("/", "GET")));
         
-        $this->assertTrue($s->configNotified());
-        $this->assertTrue($s->verifyNotified());
-        $this->assertTrue($s->successNotified());
+        $this->assertTrue($s->handledConfigure());
+        $this->assertTrue($s->handledRequest());
+        $this->assertTrue($s->handledSuccess());
     }
     
-    public function testNotifyException()
+    public function testDispatchFirewallEvents2()
     {
         $f = new Firewall;
         $s = new Mock\ExceptionSubscriber;
+        $this->assertFalse($s->handledRequest());
+        $this->assertFalse($s->handledException());
+        $this->assertFalse($s->handledResponse());        
         
         $f->addSubscriber($s);
         
-        try {
-            $f->verifyRequest(Request::create("/", "GET"));            
-        } catch (\Exception $e) {
-            $this->assertTrue($s->verifyNotified());
-            $this->assertTrue($s->exceptionNotified());
-            $this->assertTrue($e instanceof Mock\Exception);
-        }
+        $response = $f->verifyRequest(Request::create("/", "GET"));
+        $this->assertTrue($s->handledRequest());
+        $this->assertTrue($s->handledException());
+        $this->assertTrue($s->handledResponse());
+        $this->assertTrue($response instanceof Response);
+        $this->assertSame("foo", $response->getContent());
     }
 }

@@ -2,6 +2,8 @@
 
 namespace AC\Component\Firewall\Event;
 
+use Symfony\Component\HttpFoundation\Request;
+
 class FirewallExceptionEvent extends FirewallEvent
 {
 	protected $exception;
