@@ -16,29 +16,29 @@ use Symfony\Component\HttpFoundation\Request;
 class ConfigureFirewallEvent extends FirewallEvent
 {
     private $firewall;
-    
+
     public function __construct(Firewall $firewall, Request $request)
     {
         $this->firewall = $firewall;
         parent::__construct($request);
     }
-    
+
     /**
      * Add an event listener which will be registered in the Firewall's
      * EventDispatcher instance.
      *
-     * @param mixed $listener 
+     * @param mixed $listener
      */
     public function addFirewallListener($eventName, $listener)
     {
         $this->firewall->addListener($eventName, $listener);
     }
-    
+
     /**
-     * Add an event subscriber which will be registered in the Firewall's 
+     * Add an event subscriber which will be registered in the Firewall's
      * EventDispatcher instance
      *
-     * @param EventSubscriberInterface $subscriber 
+     * @param EventSubscriberInterface $subscriber
      */
     public function addFirewallSubscriber(EventSubscriberInterface $subscriber)
     {

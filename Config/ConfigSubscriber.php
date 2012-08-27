@@ -9,8 +9,8 @@ use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * This Firewall subscriber allows registering configuration to be applied to all incoming requests, based on 
- * matched request patterns.  Any matches will lazily register Firewall listeners/subscribers if their rules 
+ * This Firewall subscriber allows registering configuration to be applied to all incoming requests, based on
+ * matched request patterns.  Any matches will lazily register Firewall listeners/subscribers if their rules
  * apply to the incoming request, otherwise they will be ignored.
  *
  * @package Firewall
@@ -19,7 +19,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class ConfigSubscriber implements EventSubscriberInterface
 {
     protected $rules;
-    
+
     public function __construct($rules = array())
     {
         $this->rules = $rules;
@@ -28,23 +28,23 @@ class ConfigSubscriber implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-	public static function getSubscribedEvents()
-	{
-		return array(
-			FirewallEvents::CONFIGURE => array('onFirewallConfigure', -128),
-		);
-	}
-    
+    public static function getSubscribedEvents()
+    {
+        return array(
+            FirewallEvents::CONFIGURE => array('onFirewallConfigure', -128),
+        );
+    }
+
     /**
      * Configure the firewall based on config mapped to route patterns.  Call handlers
      * to register firewall listeners if the patterns have any rules associated.
      *
-     * @param ConfigureFirewallEvent $e 
-     */    
+     * @param ConfigureFirewallEvent $e
+     */
     public function onFirewallConfigure(ConfigureFirewallEvent $e)
     {
         $request = $e->getRequest();
-        
+
         //loop through rules, call config handlers if any rules match
         foreach ($this->rules as $pattern => $handlers) {
             $matcher = new RequestMatcher($pattern);
@@ -55,13 +55,13 @@ class ConfigSubscriber implements EventSubscriberInterface
             }
         }
     }
-    
+
     /**
      * Handle config for a specific handler.
      *
-     * @param ConfigureFirewallEvent $e 
-     * @param string $handlerKey 
-     * @param mixed $handlerConfig 
+     * @param ConfigureFirewallEvent $e
+     * @param string                 $handlerKey
+     * @param mixed                  $handlerConfig
      */
     protected function processHandlerConfig(ConfigureFirewallEvent $e, $handlerKey, $handlerConfig)
     {
@@ -70,11 +70,11 @@ class ConfigSubscriber implements EventSubscriberInterface
             $this->handlers[$handlerKey]->onFirewallConfigure($e, $handlerConfig);
         }
     }
-    
+
     /**
      * Register a handler to handle a specific configuration key
      *
-     * @param ConfigHandlerInterface $handler 
+     * @param ConfigHandlerInterface $handler
      */
     public function addConfigHandler(ConfigHandlerInterface $handler)
     {

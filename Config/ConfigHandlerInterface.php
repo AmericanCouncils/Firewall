@@ -6,6 +6,13 @@ use AC\Component\Firewall\Firewall;
 use AC\Component\Firewall\Event\ConfigureFirewallEvent;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Required interface for config handlers handled by the
+ * ConfigSubscriber
+ *
+ * @package Firewall
+ * @author Evan Villemez
+ */
 interface ConfigHandlerInterface
 {
     /**
@@ -13,16 +20,13 @@ interface ConfigHandlerInterface
      *
      * @return string
      */
-	public function getKey();
-    
+    public function getKey();
+
     /**
      * Configure a firewall by adding listeners/subscribers, based on the incoming request and received configuration.
      *
-     * @param Firewall $firewall 
-     * @param Request $request 
-     * @param string $config 
-     * @return void
-     * @author Evan Villemez
+     * @param ConfigureFirewallEvent $event
+     * @param mixed                  $config
      */
     public function onFirewallConfigure(ConfigureFirewallEvent $event, $config);
 }

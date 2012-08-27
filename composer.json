@@ -1,7 +1,7 @@
 {
     "name": "ac/firewall",
     "type": "library",
-    "description": "Request verification system for PHP.",
+    "description": "Request verification component for PHP 5.3+.",
     "keywords": ["firewall", "authentication", "security"],
     "homepage": "http://github.com/americancouncils/firewall",
     "license": "MIT",

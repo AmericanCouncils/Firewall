@@ -14,13 +14,13 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($f);
         $this->assertTrue($f instanceof Firewall);
     }
-    
+
     public function testVerifyRequest1()
     {
         $f = new Firewall;
         $this->assertTrue($f->verifyRequest(Request::create("/", "GET")));
     }
-    
+
     public function testDispatchFirewallEvents1()
     {
         $f = new Firewall;
@@ -28,25 +28,25 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($s->handledConfigure());
         $this->assertFalse($s->handledRequest());
         $this->assertFalse($s->handledSuccess());
-        
+
         $f->addSubscriber($s);
         $this->assertTrue($f->verifyRequest(Request::create("/", "GET")));
-        
+
         $this->assertTrue($s->handledConfigure());
         $this->assertTrue($s->handledRequest());
         $this->assertTrue($s->handledSuccess());
     }
-    
+
     public function testDispatchFirewallEvents2()
     {
         $f = new Firewall;
         $s = new Mock\ExceptionSubscriber;
         $this->assertFalse($s->handledRequest());
         $this->assertFalse($s->handledException());
-        $this->assertFalse($s->handledResponse());        
-        
+        $this->assertFalse($s->handledResponse());
+
         $f->addSubscriber($s);
-        
+
         $response = $f->verifyRequest(Request::create("/", "GET"));
         $this->assertTrue($s->handledRequest());
         $this->assertTrue($s->handledException());

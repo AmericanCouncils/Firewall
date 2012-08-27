@@ -23,31 +23,31 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class Firewall
 {
     protected $dispatcher;
-    
+
     /**
      * Constructor requires an event dispatcher to dispatch firewall events.
      *
-     * @param EventDispatcherInterface $dispatcher 
+     * @param EventDispatcherInterface $dispatcher
      */
-	public function __construct(EventDispatcherInterface $dispatcher = null)
+    public function __construct(EventDispatcherInterface $dispatcher = null)
     {
-        if(!$dispatcher) {
+        if (!$dispatcher) {
             $dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher;
         }
         $this->dispatcher = $dispatcher;
     }
-    
+
     /**
      * Verify an incoming request by dispatching events to firewall listeners.
      *
-     * @param Request $request 
-     * @return true|Response  Will return true on success, could potentially return a response.
-     * @throws Exception  Will throw any exceptions caught, if not handled by a listener.
+     * @param  Request       $request
+     * @return true|Response Will return true on success, could potentially return a response.
+     * @throws Exception     Will throw any exceptions caught, if not handled by a listener.
      */
     public function verifyRequest(Request $request)
     {
         try {
-            
+
             //config event, listeners may add listeners/subscribers for other firewall events depending on the request
             if ($response = $this->dispatcher->dispatch(FirewallEvents::CONFIGURE, new ConfigureFirewallEvent($this, $request))->getResponse()) {
                 return $this->dispatcher->dispatch(FirewallEvents::RESPONSE, new FirewallResponseEvent($request, $response))->getResponse();
@@ -64,19 +64,19 @@ class Firewall
             if ($response = $this->dispatcher->dispatch(FirewallEvents::EXCEPTION, new FirewallExceptionEvent($request, $e))->getResponse()) {
                 return $this->dispatcher->dispatch(FirewallEvents::RESPONSE, new FirewallResponseEvent($request, $response))->getResponse();
             }
-            
+
             //throw the original exception if we didn't get a response from any of the firewall listeners
             throw $e;
         }
-        
+
         //success event
         if ($response = $this->dispatcher->dispatch(FirewallEvents::SUCCESS, new FirewallEvent($request))->getResponse()) {
             return $this->dispatcher->dispatch(FirewallEvents::RESPONSE, new FirewallResponseEvent($request, $response))->getResponse();
         }
-        
+
         return true;
     }
-    
+
     /**
      * @see Symfony\Component\EventDispatcher\EventDispatcherInterface::addListener
      */
@@ -84,7 +84,7 @@ class Firewall
     {
         $this->dispatcher->addListener($eventName, $listener);
     }
-    
+
     /**
      * @see Symfony\Component\EventDispatcher\EventDispatcherInterface::addSubscriber
      */
@@ -92,5 +92,5 @@ class Firewall
     {
         $this->dispatcher->addSubscriber($subscriber);
     }
-    
+
 }

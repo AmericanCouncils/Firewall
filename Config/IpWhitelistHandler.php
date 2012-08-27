@@ -7,15 +7,15 @@ use AC\Component\Firewall\Listener\IpRangeFilter;
 
 class IpWhitelistHandler implements ConfigHandlerInterface
 {
-	
-	public function getKey()
-	{
-		return 'ip_whitelist';
-	}
-	
-	public function onFirewallConfigure(ConfigureFirewallEvent $event, $config)
-	{
-		$event->addFirewallListener(FirewallEvents::REQUEST, array(new IpRangeFilter($config, IpRangeFilter::WHITELIST), 'onFirewallRequest'));
-	}
-    
+
+    public function getKey()
+    {
+        return 'ip_whitelist';
+    }
+
+    public function onFirewallConfigure(ConfigureFirewallEvent $event, $config)
+    {
+        $event->addFirewallListener(FirewallEvents::REQUEST, array(new IpRangeFilter($config, IpRangeFilter::WHITELIST), 'onFirewallRequest'));
+    }
+
 }
